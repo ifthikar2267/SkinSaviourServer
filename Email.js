@@ -8,7 +8,11 @@ require('dotenv').config();
 const app = express();
 
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+    origin: 'https://skin-saviour-server-sigma.vercel.app', // Adjust this to your React frontend's origin
+    methods: ['POST']
+}));
+
 
 // Middleware
 app.use(bodyParser.json());
