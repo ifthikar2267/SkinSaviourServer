@@ -8,11 +8,7 @@ require('dotenv').config();
 const app = express();
 
 const cors = require('cors');
-app.use(cors({
-    origin: 'https://skin-saviour-server-sigma.vercel.app', // Adjust this to your React frontend's origin
-    methods: ['POST']
-}));
-
+app.use(cors());
 
 // Middleware
 app.use(bodyParser.json());
@@ -30,7 +26,7 @@ var sender = nodemailer.createTransport({
 
 // Function to read the HTML template and replace placeholders
 const getEmailTemplate = (name, email, phoneNumber, comment) => {
-    const filePath = path.join('template.html');
+    const filePath = path.join(__dirname,'template.html');
     let html = fs.readFileSync(filePath, 'utf8');
     html = html.replace('{{name}}', name)
                .replace('{{email}}', email)
