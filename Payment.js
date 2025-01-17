@@ -10,9 +10,9 @@ app.use(cors({
 // API route to get the WhatsApp phone number
 app.get("/api/whatsapp-phone", (req, res) => {
   console.log('request arrived')
-  const phoneNumber = process.env.WHATSAPP_PHONE;
-  console.log(phoneNumber)
-  res.json({ phone: phoneNumber });
+  // const phoneNumber = process.env.WHATSAPP_PHONE;
+  // console.log(phoneNumber)
+  // res.json({ phone: phoneNumber });
 });
 
 
