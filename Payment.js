@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors({
-  origin: ["http://localhost:3000", "https://skinsaviour-store.web.app"],
+  origin: ["https://skinsaviour-store.web.app"],
 }));
 
 // API route to get the WhatsApp phone number
