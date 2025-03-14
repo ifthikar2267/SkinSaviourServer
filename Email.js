@@ -1,13 +1,13 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config();
+import express from 'express'
+import bodyParser from 'body-parser';
+import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
+import 'dotenv/config'
 
 const app = express();
 
-const cors = require('cors');
+import cors from 'cors'
 app.use(cors());
 
 // Middleware
