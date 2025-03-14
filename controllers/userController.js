@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
 
     if (isMatch) {
       const token = createToken(user.id);
-      res.json({ success: true, token });
+      res.json({ success: true, token, user: { name: user.name } });
     } else {
       res.json({ success: false, message: 'Invalid credentials'});
     }
@@ -75,7 +75,7 @@ const registerUser = async (req, res) => {
 
     const token = createToken(user.id);
 
-    res.json({ success: true, token });
+    res.json({ success: true, token, user: { name: user.name } });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
@@ -107,4 +107,22 @@ const adminLogin = async (req, res) => {
 };
 
 
-export { loginUser, registerUser, adminLogin };
+const getUserDetails = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select("password"); // Exclude password
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+
+export { loginUser, registerUser, adminLogin, getUserDetails };
+
+
+
