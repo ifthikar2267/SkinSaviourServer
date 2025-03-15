@@ -33,7 +33,7 @@ const authMiddleware = (req, res, next) => {
 
     } catch (error) {
         console.log("Token verification failed:", error.message);
-        return res.status(403).json({ success: false, message: "Invalid token" });
+        return res.status(403).json({ success: false, message: "Invalid token please login" });
     }
 };
 

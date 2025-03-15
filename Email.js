@@ -1,67 +1,66 @@
-import express from 'express'
+import express from 'express';
 import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
-import 'dotenv/config'
+import 'dotenv/config';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
 
 const app = express();
-
-import cors from 'cors'
 app.use(cors());
-
-// Middleware
 app.use(bodyParser.json());
 
+// Fix for `__dirname` in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Nodemailer configuration
-var sender = nodemailer.createTransport({
+const sender = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-        user: process.env.EMAIL_USER, // Use environment variable for the email
-        pass: process.env.EMAIL_PASS  // Use environment variable for the password
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS  
     }
 });
 
 // Function to read the HTML template and replace placeholders
 const getEmailTemplate = (name, email, phoneNumber, comment) => {
-    const filePath = path.join(__dirname,'template.html');
+    const filePath = path.join(__dirname, 'template.html');  // Fix applied
     let html = fs.readFileSync(filePath, 'utf8');
-    html = html.replace('{{name}}', name)
+    return html.replace('{{name}}', name)
                .replace('{{email}}', email)
                .replace('{{phoneNumber}}', phoneNumber)
                .replace('{{comment}}', comment);
-    return html;
 };
 
 // Handle the POST request
-app.post('/send-email', (req, res) => {
+app.post('/send-email', async (req, res) => {
     const { name, email, phoneNumber, comment } = req.body;
 
     if (!name || !email || !phoneNumber || !comment) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
-    // Get the HTML template with filled placeholders
     const emailTemplate = getEmailTemplate(name, email, phoneNumber, comment);
 
-    var composemail = {
+    const composemail = {
         from: email,
         to: 'skinsaviour24@gmail.com',
         subject: 'Customer Query',
-        html: emailTemplate // Send the email using the template
+        html: emailTemplate
     };
 
-    sender.sendMail(composemail, function(error, info){
-        if(error){
-            console.log(error);
-            return res.status(500).json({ success: false, message: 'Failed to send email' });
-        } else {
-            console.log("Mail sent successfully: " + info.response);
-            return res.status(200).json({ success: true, message: 'Mail sent successfully' });
-        }
-    });
+    try {
+        await sender.sendMail(composemail);
+        console.log("Mail sent successfully");
+        res.status(200).json({ success: true, message: 'Mail sent successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Failed to send email' });
+    }
 });
 
 // Start the server

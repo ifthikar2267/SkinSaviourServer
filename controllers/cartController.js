@@ -33,6 +33,7 @@ const addToCart = async (req, res) => {
     }
 
     let userCart = await cartModel.findOne({ userId });
+    console.log("Existing Cart Found:", userCart);
 
     if (!userCart) {
       userCart = new cartModel({
@@ -60,6 +61,8 @@ const addToCart = async (req, res) => {
     }
 
     await userCart.save();
+    console.log("Cart saved successfully:", userCart);
+    
     res.json({ success: true, message: "Product added to cart" });
   } catch (error) {
     console.error(error);
