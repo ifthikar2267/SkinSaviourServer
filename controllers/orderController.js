@@ -1,6 +1,7 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
-import razorpay from 'razorpay'
+import razorpay from 'razorpay';
+import {sendWhatsApp} from '../server.js'
 
 //global variable
 const currency = 'inr'
@@ -54,6 +55,10 @@ const placeOrder = async (req, res) => {
       }
         const newOrder = new orderModel(orderData);
         await newOrder.save();
+
+         // Send notification to admin
+         await sendWhatsApp(newOrder);
+ 
 
         // Clear cart data
         await userModel.findByIdAndUpdate(userId, { cartData: [] });
@@ -139,6 +144,9 @@ const verifyRazorpay = async (req, res) => {
       });
 
       const savedOrder = await newOrder.save(); // Save order in DB
+
+         // Send notification to admin
+         await sendWhatsApp(savedOrder);
 
       // Clear user cart after successful payment
       await userModel.findByIdAndUpdate(userId, { cartData: {} });

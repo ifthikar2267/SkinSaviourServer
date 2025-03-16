@@ -9,6 +9,7 @@ import adminRouter from './routes/adminRoute.js'
 import cartRouter from './routes/cartRoute.js'
 import { OpenAI } from "openai";
 import orderRouter from './routes/orderRoute.js'
+import twilio from 'twilio';
 
 //app config
 const app = express()
@@ -45,6 +46,25 @@ const openai = new OpenAI({
     }
   });
   
+
+
+  //Twilio for SMS notification
+  export const sendWhatsApp = async (order) => {
+    const message = `🛒 New Order!\nOrder ID: ${order._id}\nTotal: ₹${order.totalAmount}`;
+
+    try {
+        const response = await client.messages.create({
+            body: message,
+            from: process.env.TWILIO_PHONE_NUMBER, 
+            to: process.env.ADMIN_PHONE_NUMBER
+        });
+        console.log(" WhatsApp message sent:", response.sid);
+    } catch (error) {
+        console.error(" Error sending WhatsApp:", error);
+    }
+};
+
+
 
 /*----------------------------------------------------------------------------------------------- */
 
