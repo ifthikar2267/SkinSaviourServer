@@ -1,5 +1,5 @@
 import cartModel from "../models/cartModel.js";
-import ProductModel from "../models/ProductModel.js"; 
+import productModel from "../models/productModel.js"; 
 import userModel from "../models/userModel.js";
 
 
@@ -23,7 +23,7 @@ const addToCart = async (req, res) => {
 
     // Fetch product details if missing
     if (!title || !price) {
-      const product = await ProductModel.findById(productId);
+      const product = await productModel.findById(productId);
       if (!product) {
         return res.status(404).json({ success: false, message: "Product not found" });
       }
