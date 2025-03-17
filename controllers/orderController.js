@@ -1,8 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import razorpay from 'razorpay';
-import axios from 'axios';
-
 
 
 //global variable
@@ -15,28 +13,6 @@ const razorpayInstance = new razorpay({
     key_secret : process.env.RAZORPAY_KEY_SECRET,
 })
 
-
- /*SMS notification */
-
-  async function sendOrderNotification(orderId, totals) {
-    try {
-        const response = await axios.post('https://www.fast2sms.com/dev/bulkV2', {
-            route: 'q',
-            message: `New Order Received! Order ID: ${orderId}, Amount: ₹${totals}`,
-            language: 'english',
-            flash: 1,
-            numbers: process.env.ADMIN_PHONE_NUMBER
-        }, {
-            headers: {
-                'authorization': process.env.FAST2SMS_API_KEY
-            }
-        });
-
-        console.log("SMS sent to Admin:", response.data);
-    } catch (error) {
-        console.error("Failed to send SMS:", error);
-    }
-}
 
 
 // Placing order using Cash on Delivery
@@ -81,9 +57,6 @@ const placeOrder = async (req, res) => {
       }
         const newOrder = new orderModel(orderData);
         await newOrder.save();
-
-         // Send SMS notification
-         await sendOrderNotification(newOrder._id, totals.total);
  
 
         // Clear cart data
@@ -170,9 +143,6 @@ const verifyRazorpay = async (req, res) => {
       });
 
       const savedOrder = await newOrder.save(); // Save order in DB
-
-      // Send SMS notification
-      await sendOrderNotification(savedOrder._id, totals.total);
 
 
       // Clear user cart after successful payment
