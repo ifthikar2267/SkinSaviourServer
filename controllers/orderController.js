@@ -224,5 +224,87 @@ const getUserLatestOrder = async (req, res) => {
 };
 
 
+//cancel order
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId, reason } = req.body;
 
-export {verifyRazorpay, placeOrder, placeOrderRazorpay, allOrders, userOrders, updateStatus, getUserLatestOrder};
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (order.orderStatus === "Shipped" || order.orderStatus === "Delivered") {
+      return res.status(400).json({ success: false, message: "Order cannot be cancelled after shipment" });
+    }
+
+    order.orderStatus = "Cancelled";
+    order.cancellationReason = reason;
+    await order.save();
+
+    res.json({ success: true, message: "Order cancelled successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+//return request
+const requestReturn = async (req, res) => {
+  try {
+    const { orderId, reason } = req.body;
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (order.orderStatus !== "Delivered") {
+      return res.status(400).json({ success: false, message: "Return request can only be made after delivery" });
+    }
+
+    order.returnRequest.isRequested = true;
+    order.returnRequest.reason = reason;
+    await order.save();
+
+    res.json({ success: true, message: "Return request submitted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+//Approve return from admin
+const approveReturn = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (!order.returnRequest.isRequested) {
+      return res.status(400).json({ success: false, message: "No return request found" });
+    }
+
+    order.returnRequest.approved = true;
+    order.orderStatus = "Returned";
+    await order.save();
+
+    res.json({ success: true, message: "Return approved successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+
+export {verifyRazorpay, placeOrder, placeOrderRazorpay, allOrders, userOrders, updateStatus, getUserLatestOrder, cancelOrder, requestReturn, approveReturn};

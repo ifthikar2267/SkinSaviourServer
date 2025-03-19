@@ -57,8 +57,14 @@ const orderSchema = new mongoose.Schema(
     deliveredAt: Date,
     orderStatus: {
       type: String,
-      enum: ["Confirmed","Pending", "Packing", "Shipped", "Delivered", "Cancelled"],
+      enum: ["Confirmed", "Pending", "Packing", "Shipped", "Delivered", "Cancelled", "Returned"],
       default: "Confirmed",
+    },
+    cancellationReason: { type: String }, // Stores reason for cancellation
+    returnRequest: {
+      isRequested: { type: Boolean, default: false }, // Whether return is requested
+      reason: { type: String }, // Reason for return
+      approved: { type: Boolean, default: false }, // Whether return is approved by admin
     },
     date: { type: Date, default: Date.now },
 

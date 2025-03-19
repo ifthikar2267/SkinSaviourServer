@@ -1,5 +1,5 @@
 import express from 'express'
-import {verifyRazorpay, placeOrder, placeOrderRazorpay, allOrders, userOrders, updateStatus, getUserLatestOrder} from '../controllers/orderController.js'
+import {verifyRazorpay, placeOrder, placeOrderRazorpay, allOrders, userOrders, updateStatus, getUserLatestOrder, cancelOrder, requestReturn, approveReturn} from '../controllers/orderController.js'
 import { authMiddleware, adminMiddleware } from '../middleware/adminAuth.js'
 import authUser from '../middleware/auth.js'
 
@@ -20,5 +20,12 @@ orderRouter.post('/latest-order', authUser, getUserLatestOrder); //get User Late
 
 //verify payment
 orderRouter.post('/verifyRazorpay', authUser, verifyRazorpay)
+
+
+//cancel , return , approve the order
+orderRouter.post('/cancel', authUser, cancelOrder);
+orderRouter.post('/request-return', authUser, requestReturn);
+orderRouter.post('/approve-return', authMiddleware, adminMiddleware, approveReturn);
+
 
 export default orderRouter;
