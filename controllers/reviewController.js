@@ -42,6 +42,17 @@ const addReview = async (req, res) => {
       res.status(500).json({ message: "Error fetching reviews", error: error.message });
     }
   };
+
+
+  // Route to get all reviews (for admin panel)
+const getAllReviews = async (req, res) => {
+    try {
+        const reviews = await reviewModel.find().sort({ createdAt: -1 });
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching reviews", error: error.message });
+    }
+};
   
   
   // Delete a review (Optional, for admin panel)
@@ -70,4 +81,4 @@ const addReview = async (req, res) => {
 
 
 
-  export {addReview, getReviewsByProduct, deleteReview};
+  export {addReview, getReviewsByProduct, getAllReviews, deleteReview};
