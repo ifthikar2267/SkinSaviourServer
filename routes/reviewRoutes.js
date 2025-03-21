@@ -11,7 +11,7 @@ reviewRouter.post("/add", addReview);
 reviewRouter.get("/:productId", getReviewsByProduct);
 
 //admin view product review
-reviewRouter.get("/view", getAllReviews);
+reviewRouter.get("/all", getAllReviews);
 
 // Route to delete a review (Optional, for admin)
 reviewRouter.delete("/:reviewId", deleteReview);
