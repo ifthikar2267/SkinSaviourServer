@@ -9,6 +9,7 @@ import adminRouter from './routes/adminRoute.js'
 import cartRouter from './routes/cartRoute.js'
 import { OpenAI } from "openai";
 import orderRouter from './routes/orderRoute.js'
+import reviewRouter from './routes/reviewRoutes.js'
 
 //app config
 const app = express()
@@ -56,6 +57,7 @@ app.use('/api/product', productRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/order', orderRouter)
+app.use('/api/review', reviewRouter)
 
 
 app.get('/', (req, res) => {

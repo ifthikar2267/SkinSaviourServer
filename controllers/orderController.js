@@ -229,7 +229,14 @@ const cancelOrder = async (req, res) => {
   try {
     const { orderId, reason } = req.body;
 
+    console.log("Backend - Received Order ID:", orderId); // Debugging
+
+
     const order = await orderModel.findById(orderId);
+
+    console.log("Backend - Order found:", order); // Debugging
+
+    
 
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found" });
@@ -266,8 +273,10 @@ const requestReturn = async (req, res) => {
       return res.status(400).json({ success: false, message: "Return request can only be made after delivery" });
     }
 
-    order.returnRequest.isRequested = true;
-    order.returnRequest.reason = reason;
+    order.returnRequest = {
+      isRequested: true,
+      reason: reason,
+    };
     await order.save();
 
     res.json({ success: true, message: "Return request submitted successfully" });
