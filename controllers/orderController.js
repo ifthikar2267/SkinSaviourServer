@@ -1,6 +1,8 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import razorpay from 'razorpay';
+import twilio from 'twilio';
+
 
 
 //global variable
@@ -13,6 +15,8 @@ const razorpayInstance = new razorpay({
     key_secret : process.env.RAZORPAY_KEY_SECRET,
 })
 
+// Twilio Config
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
 // Placing order using Cash on Delivery
@@ -61,6 +65,13 @@ const placeOrder = async (req, res) => {
 
         // Clear cart data
         await userModel.findByIdAndUpdate(userId, { cartData: [] });
+
+          // Send SMS to Admin
+          await client.messages.create({
+            body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: process.env.ADMIN_PHONE_NUMBER,
+        });
 
         res.json({ success: true, message: "Order Placed Successfully"});
 
@@ -148,6 +159,13 @@ const verifyRazorpay = async (req, res) => {
       // Clear user cart after successful payment
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
+        // Send SMS to Admin
+        await client.messages.create({
+          body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: process.env.ADMIN_PHONE_NUMBER,
+      });
+
       return res.json({ success: true, message: "Payment Successful & Order Created", order: savedOrder });
     } else {
       return res.json({ success: false, message: "Payment Failed. Order not created." });
@@ -229,12 +247,8 @@ const cancelOrder = async (req, res) => {
   try {
     const { orderId, reason } = req.body;
 
-    console.log("Backend - Received Order ID:", orderId); // Debugging
-
 
     const order = await orderModel.findById(orderId);
-
-    console.log("Backend - Order found:", order); // Debugging
 
     
 
