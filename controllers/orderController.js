@@ -160,6 +160,8 @@ const verifyRazorpay = async (req, res) => {
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
         // Send SMS to Admin
+        const shippingAddress = `Street: ${shippingAddress.street}, City: ${shippingAddress.city}, State: ${shippingAddress.state}, Zip: ${shippingAddress.zip}`;
+
         await client.messages.create({
           body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
           from: process.env.TWILIO_PHONE_NUMBER,
