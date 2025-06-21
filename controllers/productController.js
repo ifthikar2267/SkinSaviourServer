@@ -29,8 +29,7 @@ function bufferToStream(buffer) {
 // Modify the addProduct route to use multer middleware
 const addProduct = async (req, res) => {
     try {
-        const { title, price, category, highlights, benefits } =
-            req.body;
+        const { title, price, category, highlights, benefits } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ success: false, message: "No image uploaded" });

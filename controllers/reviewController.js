@@ -5,7 +5,6 @@ import reviewModel from "../models/reviewModel.js";
 const addReview = async (req, res) => {
     try {
       const { productId, userName, rating, comment } = req.body;
-      //const { userName, rating, comment } = req.body;
   
     if (!productId || !userName || !rating || !comment) {
        return res.status(400).json({ message: "All fields are required!" });

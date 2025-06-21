@@ -4,7 +4,7 @@ import userModel from "../models/userModel.js";
 
 
 
-// Add product to cart
+// Add product to cart 
 const addToCart = async (req, res) => {
   try {
     console.log("Incoming request body:", req.body); // Debugging log

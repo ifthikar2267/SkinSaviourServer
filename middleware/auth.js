@@ -15,6 +15,7 @@ const authUser = async (req, res, next) => {
       token = token.slice(7).trim(); 
      }
 
+    // Verify token
     const token_decode = jwt.verify(token, process.env.JWT_SECRET);
     req.body.userId = token_decode.id;
     req.user = await userModel.findById(token_decode.id).select("password");

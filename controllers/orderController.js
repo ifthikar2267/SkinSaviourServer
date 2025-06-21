@@ -1,13 +1,13 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import razorpay from 'razorpay';
-import twilio from 'twilio';
+// import twilio from 'twilio';
 
 
 
 //global variable
-const currency = 'inr'
-const deliveryCharge = 50
+// const currency = 'inr'
+// const deliveryCharge = 50
 
 //gateway initialize
 const razorpayInstance = new razorpay({
@@ -16,7 +16,7 @@ const razorpayInstance = new razorpay({
 })
 
 // Twilio Config
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+//const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
 // Placing order using Cash on Delivery
@@ -67,11 +67,16 @@ const placeOrder = async (req, res) => {
         await userModel.findByIdAndUpdate(userId, { cartData: [] });
 
           // Send SMS to Admin
-          await client.messages.create({
-            body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: process.env.ADMIN_PHONE_NUMBER,
-        });
+        
+      //   try {
+      //     await client.messages.create({
+      //         body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
+      //         from: process.env.TWILIO_PHONE_NUMBER,
+      //         to: process.env.ADMIN_PHONE_NUMBER,
+      //     });
+      // } catch (twilioError) {
+      //   console.error("Twilio SMS Error:", twilioError.message); 
+      // }
 
         res.json({ success: true, message: "Order Placed Successfully"});
 
@@ -157,16 +162,13 @@ const verifyRazorpay = async (req, res) => {
 
 
       // Clear user cart after successful payment
-      await userModel.findByIdAndUpdate(userId, { cartData: {} });
+      await userModel.findByIdAndUpdate(userId, { cartData: [] });
 
-        // Send SMS to Admin
-        const shippingAddress = `Street: ${shippingAddress.street}, City: ${shippingAddress.city}, State: ${shippingAddress.state}, Zip: ${shippingAddress.zip}`;
-
-        await client.messages.create({
-          body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
-          from: process.env.TWILIO_PHONE_NUMBER,
-          to: process.env.ADMIN_PHONE_NUMBER,
-      });
+      //   await client.messages.create({
+      //     body: `New Order Confirmed!\nOrder ID: ${newOrder._id}\nCustomer: ${user.name}\nTotal: ₹${totals.total}\nShipping Address: ${shippingAddress}`,
+      //     from: process.env.TWILIO_PHONE_NUMBER,
+      //     to: process.env.ADMIN_PHONE_NUMBER,
+      // });
 
       return res.json({ success: true, message: "Payment Successful & Order Created", order: savedOrder });
     } else {
