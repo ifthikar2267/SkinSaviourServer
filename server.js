@@ -21,11 +21,12 @@ connectCloudinary()
 app.use(express.json())
 app.use(cors())
 
-const prompt_base = `You're a friendly skincare expert. Look at the product list below and help the user find the best ones for their skin concern. Recommend a few products and say in simple words why each one helps. Also share 1–2 easy skincare tips they can follow.
+const prompt_base = `You're a friendly skincare expert. Look at the product list below and help the user find the best ones for their skin concern. Recommend a few products and explain in simple words why each one helps. Write your answer in paragraph style and make each product name bold. Also share 1-2 easy skincare tips they can follow.
 
 Products: Aloevera Gel, Anti Acne Gel, Basil Lemon Soap, Body Wash, Charcoal Soap, Chocolate Lip Scrub, Day Cream, Herbal Hair Oil, Lip Tint, Oats And Honey Soap, Pure Coconut Oil Soap, Red Wine Gel, Saffron Gel, Glutathione Serum, Glutathione Brightening Serum, Shea Butter Strawberry Lip Balm, Skin Brightening Cream, Sunscreen Lotion, Vanilla Lip Scrub, Wax Powder, Grape Fruit Shampoo, Strawberry Shampoo, Vanilla Lip Balm, Strawberry Lip Balm.
 
 User Question: `;
+
 
 
 
